@@ -46,7 +46,7 @@ program
 //   .option('-o, --out <path>', '输出文件路径')
 //   .option('-s, --src <path>', '需要转换的源文件路径');
 
-program.version(pkg.version).description(blue('soybean alias soy\n\nhttps://github.com/soybeanjs/cli'));
+program.version(pkg.version).description(blue('@gz/front-end-cli'));
 
 // 接管命令行输入，参数处理
 program.parse(process.argv);

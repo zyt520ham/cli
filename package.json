@@ -3,6 +3,7 @@
   "version": "0.1.6",
   "description": "web command lint tools",
   "license": "",
+  "main": "dist/index.mjs",
   "bin": {
     "gz-cli": "dist/index.mjs"
   },
@@ -12,7 +13,8 @@
   "scripts": {
     "build": "tsup",
     "lint": "eslint . --fix",
-    "commit": "gz-cli git-commit",
+    "gz-cli": "pnpm dist/index.mjs",
+    "commit": "pnpm dist/index.mjs git-commit",
     "cleanup": "gz-cli cleanup",
     "update-pkg": "gz-cli update-pkg",
     "update-version": "bumpp package.json",
