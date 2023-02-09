@@ -1,2 +1,4 @@
 packages:
   - 'examples/*'
+  - "pkg-common/**"
+  - "pkg-projs/**"

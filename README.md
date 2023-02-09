@@ -1,17 +1,17 @@
-# @soybeanjs/cli
+# @gz/cli
 
-SoybeanJS's command lint tools
+web command lint tools
 
 ## Usage
 
 ### install
 
 ```bash
-pnpm i -D @soybeanjs/cli
+pnpm i -D @gz/cli
 ```
 
 ### Use command
 
 ```bash
-pnpm soybean -h
+pnpm gz-cli -h
 ```

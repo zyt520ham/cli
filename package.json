@@ -1,23 +1,10 @@
 {
-  "name": "@soybeanjs/cli",
+  "name": "@gz/front-end-cli",
   "version": "0.1.6",
-  "description": "SoybeanJS's command lint tools",
-  "author": {
-    "name": "Soybean",
-    "email": "honghuangdc@gmail.com",
-    "url": "https://github.com/honghuangdc"
-  },
-  "license": "MIT",
-  "homepage": "https://github.com/honghuangdc/soybean-cli",
-  "repository": {
-    "url": "https://github.com/honghuangdc/soybean-cli.git"
-  },
-  "bugs": {
-    "url": "https://github.com/honghuangdc/soybean-cli/issues"
-  },
+  "description": "web command lint tools",
+  "license": "",
   "bin": {
-    "soybean": "dist/index.mjs",
-    "soy": "dist/index.mjs"
+    "gz-cli": "dist/index.mjs"
   },
   "files": [
     "dist"
@@ -25,9 +12,9 @@
   "scripts": {
     "build": "tsup",
     "lint": "eslint . --fix",
-    "commit": "soy git-commit",
-    "cleanup": "soy cleanup",
-    "update-pkg": "soy update-pkg",
+    "commit": "gz-cli git-commit",
+    "cleanup": "gz-cli cleanup",
+    "update-pkg": "gz-cli update-pkg",
     "update-version": "bumpp package.json",
     "publish-pkg": "pnpm -r publish --access public",
     "release": "pnpm update-version && pnpm publish-pkg"

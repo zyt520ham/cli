@@ -9,7 +9,7 @@ lerna-debug.log*
 
 node_modules
 .DS_Store
-dist
+*/dist
 dist-ssr
 coverage
 *.local
@@ -31,3 +31,5 @@ stats.html
 
 package-lock.json
 yarn.lock
+!dist
+!pkg-commom/**/dist

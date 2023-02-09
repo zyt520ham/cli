@@ -20,7 +20,7 @@
     "prompts": "^2.4.2"
   },
   "devDependencies": {
-    "@soybeanjs/cli": "workspace:*",
+    "@gz/cli": "workspace:*",
     "@types/prompts": "^2.4.2",
     "bumpp": "^8.2.1",
     "eslint": "^8.31.0",
