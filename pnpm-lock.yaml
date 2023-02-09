@@ -4,7 +4,7 @@ importers:
 
   .:
     specifiers:
-      '@soybeanjs/cli': workspace:*
+      '@gz/front-end-cli': workspace:*
       '@types/prompts': ^2.4.2
       bumpp: ^8.2.1
       commander: ^9.4.1
@@ -32,7 +32,7 @@ importers:
       rimraf: 3.0.2
       zx: 7.1.1
     devDependencies:
-      '@soybeanjs/cli': 'link:'
+      '@gz/front-end-cli': 'link:'
       '@types/prompts': 2.4.2
       bumpp: 8.2.1
       eslint: 8.31.0
@@ -45,7 +45,7 @@ importers:
 
   examples/ts-lib:
     specifiers:
-      '@soybeanjs/cli': workspace:*
+      '@gz/front-end-cli': workspace:*
       '@types/prompts': ^2.4.2
       bumpp: ^8.2.1
       commander: ^9.4.1
@@ -65,7 +65,7 @@ importers:
       minimist: 1.2.7
       prompts: 2.4.2
     devDependencies:
-      '@soybeanjs/cli': link:../..
+      '@gz/front-end-cli': link:../..
       '@types/prompts': 2.4.2
       bumpp: 8.2.1
       eslint: 8.31.0

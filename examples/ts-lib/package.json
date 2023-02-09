@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsup",
     "lint": "eslint . --fix",
-    "commit": "soybean git-commit",
+    "commit": "gz-cli git-commit",
     "esno": "esno",
     "update-pkg": "ncu --deep -u",
     "update-version": "bumpp package.json",
@@ -20,7 +20,7 @@
     "prompts": "^2.4.2"
   },
   "devDependencies": {
-    "@gz/cli": "workspace:*",
+    "@gz/front-end-cli": "workspace:*",
     "@types/prompts": "^2.4.2",
     "bumpp": "^8.2.1",
     "eslint": "^8.31.0",
