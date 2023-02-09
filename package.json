@@ -1,9 +1,9 @@
 {
   "name": "@gz/front-end-cli",
   "version": "0.1.6",
+  "private": true,
   "description": "web command lint tools",
   "license": "",
-  "private": true,
   "main": "dist/index.mjs",
   "bin": {
     "gz-cli": "dist/index.mjs"
@@ -20,7 +20,8 @@
     "update-pkg": "gz-cli update-pkg",
     "update-version": "bumpp package.json",
     "publish-pkg": "pnpm -r publish --access public",
-    "release": "pnpm update-version && pnpm publish-pkg"
+    "release": "pnpm update-version && pnpm publish-pkg",
+    "prepare": "simple-git-hooks"
   },
   "dependencies": {
     "commander": "^9.4.1",
