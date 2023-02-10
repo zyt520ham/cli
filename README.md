@@ -1,4 +1,4 @@
-# @gz/cli
+# @gz/front-end-cli
 
 web command lint tools
 
