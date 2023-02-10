@@ -3,8 +3,39 @@ import { program } from 'commander';
 import { blue } from 'kolorist';
 import pkg from '../package.json';
 import { gitCommit, verifyGitCommit } from './command';
-import { cleanup, initSimpleGitHooks, updatePkg } from './scripts';
+import { cleanLib, cleanBuildRes, initSimpleGitHooks, updatePkg, bootstrap, reInstall, cleanCache } from './scripts';
 
+program
+  .command('bootstrap')
+  .description('首次安装依赖')
+  .action(() => {
+    bootstrap();
+  });
+
+program
+  .command('re-install')
+  .description('重新安装依赖')
+  .action(() => {
+    reInstall();
+  });
+program
+  .command('clean-cache')
+  .description('清理vite缓存')
+  .action(() => {
+    cleanCache();
+  });
+program
+  .command('clean-lib')
+  .description('清空依赖和构建产物')
+  .action(() => {
+    cleanLib();
+  });
+program
+  .command('clean-buildres')
+  .description('清空构建产物')
+  .action(() => {
+    cleanBuildRes();
+  });
 program
   .command('git-commit')
   .description('生成符合 Angular 规范的 git commit')
@@ -17,13 +48,6 @@ program
   .description('校验git的commit是否符合 Angular 规范')
   .action(() => {
     verifyGitCommit();
-  });
-
-program
-  .command('cleanup')
-  .description('清空依赖和构建产物')
-  .action(() => {
-    cleanup();
   });
 
 program

@@ -26,9 +26,11 @@ var import_kolorist2 = require("kolorist");
 // package.json
 var package_default = {
   name: "@gz/front-end-cli",
-  version: "0.1.6",
+  version: "0.1.7",
+  private: true,
   description: "web command lint tools",
   license: "",
+  main: "dist/index.mjs",
   bin: {
     "gz-cli": "dist/index.mjs"
   },
@@ -36,14 +38,19 @@ var package_default = {
     "dist"
   ],
   scripts: {
+    "gz-cli": "pnpm dist/index.mjs",
+    "base-bootstrap": "pnpm install --filter @gz/front-end-cli",
+    bootstrap: "gz-cli bootstrap",
+    "re-install": "gz-cli re-install",
+    commit: "gz-cli git-commit",
+    "clean-lib": "gz-cli clean-lib",
+    "clean-buildres": "gz-cli clean-buildres",
+    "clean-cache": "gz-cli clean-cache",
+    updatepkg: "gz-cli update-pkg",
+    "update-version": "bumpp package.json",
     build: "tsup",
     lint: "eslint . --fix",
-    commit: "gz-cli git-commit",
-    cleanup: "gz-cli cleanup",
-    "update-pkg": "gz-cli update-pkg",
-    "update-version": "bumpp package.json",
-    "publish-pkg": "pnpm -r publish --access public",
-    release: "pnpm update-version && pnpm publish-pkg"
+    prepare: "simple-git-hooks"
   },
   dependencies: {
     commander: "^9.4.1",
@@ -56,7 +63,7 @@ var package_default = {
     zx: "^7.1.1"
   },
   devDependencies: {
-    "@soybeanjs/cli": "workspace:*",
+    "@gz/front-end-cli": "workspace:*",
     "@types/prompts": "^2.4.2",
     bumpp: "^8.2.1",
     eslint: "^8.31.0",
@@ -68,7 +75,7 @@ var package_default = {
     typescript: "^4.9.4"
   },
   "simple-git-hooks": {
-    "commit-msg": "pnpm soybean git-commit-verify",
+    "commit-msg": "pnpm gz-cli git-commit-verify",
     "pre-commit": "pnpm exec lint-staged --concurrent false"
   },
   "lint-staged": {
@@ -77,7 +84,7 @@ var package_default = {
     ]
   },
   publishConfig: {
-    registry: "https://registry.npmjs.org/"
+    registry: ""
   }
 };
 
@@ -164,8 +171,14 @@ function verifyGitCommit() {
 
 // src/scripts/cleanup.ts
 var import_zx = require("zx");
-async function cleanup() {
-  await import_zx.$`pnpm rimraf node_modules dist package-lock.json yarn.lock pnpm-lock.yaml ./**/node_modules ./**/dist ./**/package-lock.json ./**/yarn.lock ./**/pnpm-lock.yaml`;
+async function cleanLib() {
+  await import_zx.$`pnpm rimraf node_modules package-lock.json yarn.lock pnpm-lock.yaml ./**/node_modules ./**/package-lock.json ./**/yarn.lock ./**/pnpm-lock.yaml`;
+}
+async function cleanBuildRes() {
+  await import_zx.$`pnpm rimraf  dist  ./**/dist`;
+}
+async function cleanCache() {
+  await import_zx.$`pnpm rimraf node_modules/.cache/ && rimraf node_modules/.vite`;
 }
 
 // src/scripts/git-hooks.ts
@@ -183,15 +196,36 @@ async function updatePkg() {
   await import_zx3.$`ncu --deep -u`;
 }
 
+// src/scripts/bootstrap.ts
+var import_zx4 = require("zx");
+async function bootstrap() {
+  await import_zx4.$`pnpm install`;
+}
+async function reInstall() {
+  await import_zx4.$`pnpm rimraf node_modules package-lock.json yarn.lock pnpm-lock.yaml ./**/node_modules./**/package-lock.json ./**/yarn.lock ./**/pnpm-lock.yaml && pnpm install`;
+}
+
 // src/index.ts
+import_commander.program.command("bootstrap").description("\u9996\u6B21\u5B89\u88C5\u4F9D\u8D56").action(() => {
+  bootstrap();
+});
+import_commander.program.command("re-install").description("\u91CD\u65B0\u5B89\u88C5\u4F9D\u8D56").action(() => {
+  reInstall();
+});
+import_commander.program.command("clean-cache").description("\u6E05\u7406vite\u7F13\u5B58").action(() => {
+  cleanCache();
+});
+import_commander.program.command("clean-lib").description("\u6E05\u7A7A\u4F9D\u8D56\u548C\u6784\u5EFA\u4EA7\u7269").action(() => {
+  cleanLib();
+});
+import_commander.program.command("clean-buildres").description("\u6E05\u7A7A\u6784\u5EFA\u4EA7\u7269").action(() => {
+  cleanBuildRes();
+});
 import_commander.program.command("git-commit").description("\u751F\u6210\u7B26\u5408 Angular \u89C4\u8303\u7684 git commit").action(() => {
   gitCommit();
 });
 import_commander.program.command("git-commit-verify").description("\u6821\u9A8Cgit\u7684commit\u662F\u5426\u7B26\u5408 Angular \u89C4\u8303").action(() => {
   verifyGitCommit();
-});
-import_commander.program.command("cleanup").description("\u6E05\u7A7A\u4F9D\u8D56\u548C\u6784\u5EFA\u4EA7\u7269").action(() => {
-  cleanup();
 });
 import_commander.program.command("init-git-hooks").description("\u521D\u59CB\u5316git\u94A9\u5B50").action(() => {
   initSimpleGitHooks();
@@ -199,5 +233,5 @@ import_commander.program.command("init-git-hooks").description("\u521D\u59CB\u53
 import_commander.program.command("update-pkg").description("\u5347\u7EA7\u4F9D\u8D56").action(() => {
   updatePkg();
 });
-import_commander.program.version(package_default.version).description((0, import_kolorist2.blue)("soybean alias soy\n\nhttps://github.com/soybeanjs/cli"));
+import_commander.program.version(package_default.version).description((0, import_kolorist2.blue)("@gz/front-end-cli"));
 import_commander.program.parse(process.argv);

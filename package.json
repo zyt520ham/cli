@@ -12,13 +12,12 @@
     "dist"
   ],
   "scripts": {
-    "bootstrap": "gz-cli bootstrap",
-    "re-install": "gz-cli re-install",
+    "base-bootstrap": "pnpm install --filter @gz/front-end-cli",
+    "bootstrap": "pnpm install -w",
+    "re-install": "pnpm rimraf node_modules package-lock.json yarn.lock pnpm-lock.yaml ./**/node_modules ./**/package-lock.json ./**/yarn.lock ./**/pnpm-lock.yaml && pnpm bootstrap ",
     "commit": "gz-cli git-commit",
-    "clean-lib": "gz-cli clean-lib",
-    "clean-buildres": "gz-cli clean-buildres",
-    "clean-cache": "gz-cli clean-cache",
-    "update-pkg": "gz-cli update-pkg",
+    "clean:cache": "rimraf node_modules/.cache/ && rimraf node_modules/.vite",
+    "updatepkg": "gz-cli update-pkg",
     "update-version": "bumpp package.json",
     "build": "tsup",
     "lint": "eslint . --fix",
