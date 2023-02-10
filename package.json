@@ -1,6 +1,6 @@
 {
   "name": "@gz/front-end-cli",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "private": true,
   "description": "web command lint tools",
   "license": "",
@@ -12,15 +12,16 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "lint": "eslint . --fix",
-    "gz-cli": "pnpm dist/index.mjs",
+    "bootstrap": "gz-cli bootstrap",
+    "re-install": "gz-cli re-install",
     "commit": "gz-cli git-commit",
-    "cleanup": "gz-cli cleanup",
+    "clean-lib": "gz-cli clean-lib",
+    "clean-buildres": "gz-cli clean-buildres",
+    "clean-cache": "gz-cli clean-cache",
     "update-pkg": "gz-cli update-pkg",
     "update-version": "bumpp package.json",
-    "publish-pkg": "pnpm -r publish --access public",
-    "release": "pnpm update-version && pnpm publish-pkg",
+    "build": "tsup",
+    "lint": "eslint . --fix",
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
