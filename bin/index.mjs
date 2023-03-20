@@ -11,48 +11,44 @@ var package_default = {
   private: true,
   description: "web command lint tools",
   license: "",
-  main: "dist/index.mjs",
   bin: {
-    "gz-cli": "dist/index.mjs"
+    "gz-cli": "bin/index.mjs"
   },
   files: [
-    "dist"
+    "bin"
   ],
   scripts: {
-    "gz-cli": "pnpm dist/index.mjs",
     "base-bootstrap": "pnpm install --filter @gz/front-end-cli",
-    bootstrap: "gz-cli bootstrap",
+    bootstrap: "pnpm install -w",
     "re-install": "gz-cli re-install",
     commit: "gz-cli git-commit",
-    "clean-lib": "gz-cli clean-lib",
-    "clean-buildres": "gz-cli clean-buildres",
-    "clean-cache": "gz-cli clean-cache",
-    updatepkg: "gz-cli update-pkg",
-    "update-version": "bumpp package.json",
+    "clean:cache": "rimraf node_modules/.cache/ && rimraf node_modules/.vite",
+    updatepkg: "gz-cli update-pkg-lib-ver",
+    "update:version": "bumpp package.json",
     build: "tsup",
     lint: "eslint . --fix",
-    prepare: "simple-git-hooks"
+    prepare: "simple-git-hooks",
+    format: "gz-cli prettier-format"
   },
   dependencies: {
-    commander: "^9.4.1",
-    execa: "5.1.1",
-    kolorist: "^1.6.0",
-    minimist: "^1.2.7",
-    "npm-check-updates": "^16.6.2",
+    commander: "^10.0.0",
+    execa: "7.0.0",
+    kolorist: "^1.7.0",
+    minimist: "^1.2.8",
+    "npm-check-updates": "^16.7.12",
     prompts: "^2.4.2",
-    rimraf: "^3.0.2",
-    zx: "^7.1.1"
+    rimraf: "^4.4.0"
   },
   devDependencies: {
     "@gz/front-end-cli": "workspace:*",
     "@types/prompts": "^2.4.2",
-    bumpp: "^8.2.1",
-    eslint: "^8.31.0",
-    "eslint-config-soybeanjs": "0.2.1",
+    bumpp: "^9.0.0",
+    eslint: "^8.36.0",
+    "eslint-config-soybeanjs": "0.3.1",
     esno: "^0.16.3",
-    "lint-staged": "^13.1.0",
+    "lint-staged": "^13.2.0",
     "simple-git-hooks": "^2.8.1",
-    tsup: "^6.5.0",
+    tsup: "^6.6.3",
     typescript: "^4.9.4"
   },
   "simple-git-hooks": {
@@ -60,7 +56,7 @@ var package_default = {
     "pre-commit": "pnpm exec lint-staged --concurrent false"
   },
   "lint-staged": {
-    "*": [
+    "*.{js,jsx,mjs,cjs,json,ts,tsx,mts,cts,vue,svelte,astro}": [
       "eslint . --fix"
     ]
   },
@@ -71,7 +67,7 @@ var package_default = {
 
 // src/command/git/commit.ts
 import prompts from "prompts";
-import execa from "execa";
+import { execa } from "execa";
 
 // src/command/git/config.ts
 var types = [
@@ -151,68 +147,132 @@ function verifyGitCommit() {
 }
 
 // src/scripts/cleanup.ts
-import { $ } from "zx";
+import { rimraf } from "rimraf";
+var buildResPathStrs = ["dist"];
+var libResPathStrs = ["node_modules", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"];
+var viteCachePathStrs = ["node_modules/.cache/", "node_modules/.vite"];
 async function cleanLib() {
-  await $`pnpm rimraf node_modules package-lock.json yarn.lock pnpm-lock.yaml ./**/node_modules ./**/package-lock.json ./**/yarn.lock ./**/pnpm-lock.yaml`;
+  await rimraf(libResPathStrs);
+}
+async function cleanLibDeep() {
+  const deepPathStrs = libResPathStrs.map((item) => `./**/${item}`);
+  const allPathStrs = libResPathStrs.concat(deepPathStrs);
+  await rimraf(allPathStrs);
 }
 async function cleanBuildRes() {
-  await $`pnpm rimraf  dist  ./**/dist`;
+  await rimraf(buildResPathStrs);
 }
-async function cleanCache() {
-  await $`pnpm rimraf node_modules/.cache/ && rimraf node_modules/.vite`;
+async function cleanBuildResDeep() {
+  const deepPathStrs = buildResPathStrs.map((item) => `./**/${item}`);
+  const allPathStrs = buildResPathStrs.concat(deepPathStrs);
+  await rimraf(allPathStrs);
+}
+async function cleanViteCache() {
+  await rimraf(viteCachePathStrs);
+}
+async function cleanViteCacheDeep() {
+  const deepPathStrs = viteCachePathStrs.map((item) => `./**/${item}`);
+  const allPathStrs = viteCachePathStrs.concat(deepPathStrs);
+  await rimraf(allPathStrs);
 }
 
 // src/scripts/git-hooks.ts
-import { $ as $2 } from "zx";
+import { existsSync } from "fs";
+import { execa as execa2 } from "execa";
+import { rimraf as rimraf2 } from "rimraf";
 async function initSimpleGitHooks() {
-  await $2`pnpm rimraf .husky`;
-  await $2`git config core.hooksPath .git/hooks/`;
-  await $2`rimraf .git/hooks`;
-  await $2`pnpm simple-git-hooks`;
+  const huskyDir = `${process.cwd()}/.husky`;
+  const existHusky = existsSync(huskyDir);
+  if (existHusky) {
+    await rimraf2(".husky");
+    await execa2("git", ["config", "core.hooksPath", ".git/hooks/"], { stdio: "inherit" });
+  }
+  await rimraf2(".git/hooks");
+  await execa2("npx", ["simple-git-hooks"], { stdio: "inherit" });
 }
 
 // src/scripts/update-pkg.ts
-import { $ as $3 } from "zx";
+import { execa as execa3 } from "execa";
 async function updatePkg() {
-  await $3`ncu --deep -u`;
+  execa3("npx", ["ncu", "--deep", "-u"], { stdio: "inherit" });
 }
 
 // src/scripts/bootstrap.ts
-import { $ as $4 } from "zx";
+import { execa as execa4 } from "execa";
+import { rimraf as rimraf3 } from "rimraf";
 async function bootstrap() {
-  await $4`pnpm install`;
+  await execa4("npx", ["install"]);
 }
 async function reInstall() {
-  await $4`pnpm rimraf node_modules package-lock.json yarn.lock pnpm-lock.yaml ./**/node_modules./**/package-lock.json ./**/yarn.lock ./**/pnpm-lock.yaml && pnpm install`;
+  const libResPathStrs2 = ["node_modules", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"];
+  console.info("\u5F00\u59CB\u79FB\u9664\u4F9D\u8D56\u3002\u3002\u3002");
+  await rimraf3(libResPathStrs2);
+  console.info("\u4F9D\u8D56\u5DF2\u7ECF\u79FB\u9664\uFF0C\u91CD\u65B0\u5B89\u88C5\u4F9D\u8D56\u4E2D\u3002\u3002\u3002");
+  await execa4("pnpm", ["install"]);
+}
+
+// src/scripts/format.ts
+import { execa as execa5 } from "execa";
+function prettierFormat() {
+  const formatFiles = [
+    "!**/*.{js,jsx,mjs,cjs,json,ts,tsx,mts,cts,vue,svelte,astro}",
+    "!*.min.*",
+    "!CHANGELOG.md",
+    "!dist",
+    "!LICENSE*",
+    "!output",
+    "!coverage",
+    "!public",
+    "!temp",
+    "!package-lock.json",
+    "!pnpm-lock.yaml",
+    "!yarn.lock",
+    "!__snapshots__"
+  ];
+  execa5("npx", ["prettier", ".", "--write", ...formatFiles], {
+    stdio: "inherit"
+  });
 }
 
 // src/index.ts
-program.command("bootstrap").description("\u9996\u6B21\u5B89\u88C5\u4F9D\u8D56").action(() => {
-  bootstrap();
-});
-program.command("re-install").description("\u91CD\u65B0\u5B89\u88C5\u4F9D\u8D56").action(() => {
-  reInstall();
-});
-program.command("clean-cache").description("\u6E05\u7406vite\u7F13\u5B58").action(() => {
-  cleanCache();
-});
-program.command("clean-lib").description("\u6E05\u7A7A\u4F9D\u8D56\u548C\u6784\u5EFA\u4EA7\u7269").action(() => {
-  cleanLib();
-});
-program.command("clean-buildres").description("\u6E05\u7A7A\u6784\u5EFA\u4EA7\u7269").action(() => {
-  cleanBuildRes();
-});
 program.command("git-commit").description("\u751F\u6210\u7B26\u5408 Angular \u89C4\u8303\u7684 git commit").action(() => {
-  gitCommit();
+  return gitCommit();
 });
 program.command("git-commit-verify").description("\u6821\u9A8Cgit\u7684commit\u662F\u5426\u7B26\u5408 Angular \u89C4\u8303").action(() => {
   verifyGitCommit();
 });
-program.command("init-git-hooks").description("\u521D\u59CB\u5316git\u94A9\u5B50").action(() => {
-  initSimpleGitHooks();
+program.command("bootstrap").description("\u9996\u6B21\u5B89\u88C5\u4F9D\u8D56").action(() => {
+  return bootstrap();
 });
-program.command("update-pkg").description("\u5347\u7EA7\u4F9D\u8D56").action(() => {
-  updatePkg();
+program.command("re-install").description("\u91CD\u65B0\u5B89\u88C5\u4F9D\u8D56").action(() => {
+  return reInstall();
+});
+program.command("clean-cache").description("\u6E05\u7406vite\u7F13\u5B58").action(() => {
+  return cleanViteCache();
+});
+program.command("clean-cache-deep").description("\u6E05\u7406vite\u7F13\u5B58(\u5305\u542B\u5B50\u5305)").action(() => {
+  return cleanViteCacheDeep();
+});
+program.command("clean-lib").description("\u6E05\u7A7A\u4F9D\u8D56\u548C\u6784\u5EFA\u4EA7\u7269").action(() => {
+  return cleanLib();
+});
+program.command("clean-lib-deep").description("\u6E05\u7A7A\u4F9D\u8D56\u548C\u6784\u5EFA\u4EA7\u7269\uFF08\u5305\u542B\u5B50\u5305\uFF09").action(() => {
+  return cleanLibDeep();
+});
+program.command("clean-buildres").description("\u6E05\u7A7A\u6784\u5EFA\u4EA7\u7269").action(() => {
+  return cleanBuildRes();
+});
+program.command("clean-buildres-deep").description("\u6E05\u7A7A\u6784\u5EFA\u4EA7\u7269\uFF08\u5305\u542B\u5B50\u5305\uFF09").action(() => {
+  return cleanBuildResDeep();
+});
+program.command("init-git-hooks").description("\u521D\u59CB\u5316simple-git-hooks\u94A9\u5B50").action(() => {
+  return initSimpleGitHooks();
+});
+program.command("update-pkg-lib-ver").description("\u5347\u7EA7\u4F9D\u8D56").action(() => {
+  return updatePkg();
+});
+program.command("prettier-format").description("prettier\u683C\u5F0F\u5316").action(() => {
+  prettierFormat();
 });
 program.version(package_default.version).description(blue("@gz/front-end-cli"));
 program.parse(process.argv);

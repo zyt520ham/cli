@@ -2,47 +2,27 @@
 import { program } from 'commander';
 import { blue } from 'kolorist';
 import pkg from '../package.json';
+
 import { gitCommit, verifyGitCommit } from './command';
-import { cleanLib, cleanBuildRes, initSimpleGitHooks, updatePkg, bootstrap, reInstall, cleanCache } from './scripts';
-
-program
-  .command('bootstrap')
-  .description('首次安装依赖')
-  .action(() => {
-    bootstrap();
-  });
-
-program
-  .command('re-install')
-  .description('重新安装依赖')
-  .action(() => {
-    reInstall();
-  });
-program
-  .command('clean-cache')
-  .description('清理vite缓存')
-  .action(() => {
-    cleanCache();
-  });
-program
-  .command('clean-lib')
-  .description('清空依赖和构建产物')
-  .action(() => {
-    cleanLib();
-  });
-program
-  .command('clean-buildres')
-  .description('清空构建产物')
-  .action(() => {
-    cleanBuildRes();
-  });
+import {
+  cleanLib,
+  cleanLibDeep,
+  cleanBuildRes,
+  cleanBuildResDeep,
+  initSimpleGitHooks,
+  updatePkg,
+  bootstrap,
+  reInstall,
+  cleanViteCache,
+  cleanViteCacheDeep,
+  prettierFormat
+} from './scripts';
 program
   .command('git-commit')
   .description('生成符合 Angular 规范的 git commit')
   .action(() => {
-    gitCommit();
+    return gitCommit();
   });
-
 program
   .command('git-commit-verify')
   .description('校验git的commit是否符合 Angular 规范')
@@ -51,17 +31,74 @@ program
   });
 
 program
-  .command('init-git-hooks')
-  .description('初始化git钩子')
+  .command('bootstrap')
+  .description('首次安装依赖')
   .action(() => {
-    initSimpleGitHooks();
+    return bootstrap();
   });
 
 program
-  .command('update-pkg')
+  .command('re-install')
+  .description('重新安装依赖')
+  .action(() => {
+    return reInstall();
+  });
+program
+  .command('clean-cache')
+  .description('清理vite缓存')
+  .action(() => {
+    return cleanViteCache();
+  });
+program
+  .command('clean-cache-deep')
+  .description('清理vite缓存(包含子包)')
+  .action(() => {
+    return cleanViteCacheDeep();
+  });
+program
+  .command('clean-lib')
+  .description('清空依赖和构建产物')
+  .action(() => {
+    return cleanLib();
+  });
+program
+  .command('clean-lib-deep')
+  .description('清空依赖和构建产物（包含子包）')
+  .action(() => {
+    return cleanLibDeep();
+  });
+program
+  .command('clean-buildres')
+  .description('清空构建产物')
+  .action(() => {
+    return cleanBuildRes();
+  });
+program
+  .command('clean-buildres-deep')
+  .description('清空构建产物（包含子包）')
+  .action(() => {
+    return cleanBuildResDeep();
+  });
+
+program
+  .command('init-git-hooks')
+  .description('初始化simple-git-hooks钩子')
+  .action(() => {
+    return initSimpleGitHooks();
+  });
+
+program
+  .command('update-pkg-lib-ver')
   .description('升级依赖')
   .action(() => {
-    updatePkg();
+    return updatePkg();
+  });
+
+program
+  .command('prettier-format')
+  .description('prettier格式化')
+  .action(() => {
+    prettierFormat();
   });
 
 // 配置options
